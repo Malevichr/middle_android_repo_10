@@ -13,8 +13,9 @@ import com.google.android.gms.location.Priority
 import ru.yandex.buggyweatherapp.model.Location
 import ru.yandex.buggyweatherapp.utils.LocationTracker
 import java.util.Locale
+import javax.inject.Inject
 
-class LocationRepository(
+class LocationRepository @Inject constructor(
     
     private val context: Context
 ) {

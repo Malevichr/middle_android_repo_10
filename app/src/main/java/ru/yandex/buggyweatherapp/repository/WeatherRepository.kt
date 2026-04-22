@@ -79,7 +79,6 @@ class WeatherRepository {
         
         return WeatherData(
             cityName = json.get("name").asString,
-            country = sys.get("country").asString,
             temperature = main.get("temp").asDouble,
             feelsLike = main.get("feels_like").asDouble,
             minTemp = main.get("temp_min").asDouble,
@@ -87,19 +86,10 @@ class WeatherRepository {
             humidity = main.get("humidity").asInt,
             pressure = main.get("pressure").asInt,
             windSpeed = wind.get("speed").asDouble,
-            windDirection = if (wind.has("deg")) wind.get("deg").asInt else 0,
             description = weather.get("description").asString,
             icon = weather.get("icon").asString,
-            cloudiness = clouds.get("all").asInt,
             sunriseTime = sys.get("sunrise").asLong,
             sunsetTime = sys.get("sunset").asLong,
-            timezone = json.get("timezone").asInt,
-            timestamp = json.get("dt").asLong,
-            rawApiData = json.toString(),
-            rain = if (json.has("rain") && json.getAsJsonObject("rain").has("1h")) 
-                    json.getAsJsonObject("rain").get("1h").asDouble else null,
-            snow = if (json.has("snow") && json.getAsJsonObject("snow").has("1h"))
-                    json.getAsJsonObject("snow").get("1h").asDouble else null
         )
     }
     

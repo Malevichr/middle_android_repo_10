@@ -16,13 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import ru.yandex.buggyweatherapp.ui.screens.WeatherScreen
 import ru.yandex.buggyweatherapp.ui.theme.BuggyWeatherAppTheme
 import ru.yandex.buggyweatherapp.viewmodel.WeatherViewModel
 
 class MainActivity : ComponentActivity() {
     
-    private val weatherViewModel = WeatherViewModel()
+
     
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -68,26 +69,11 @@ class MainActivity : ComponentActivity() {
             BuggyWeatherAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     WeatherScreen(
-                        viewModel = weatherViewModel,
+                        viewModel = hiltViewModel<WeatherViewModel>(),
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
         }
-    }
-    
-    
-    override fun onDestroy() {
-        super.onDestroy()
-        
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WeatherAppPreview() {
-    BuggyWeatherAppTheme {
-        
-        Text("Weather App Preview")
     }
 }
