@@ -12,4 +12,11 @@
     <string name="no_location_permission">Location permission is required to get current weather</string>
     <string name="location_error">Unable to get current location</string>
     <string name="network_error">Network error. Please check your connection</string>
+    <string name="favorite">Favorite</string>
+    <string name="get_current_location">Get current location</string>
+    <string name="search">Search</string>
+    <string name="refresh_weather">Refresh Weather</string>
+    <string name="loading_weather_data">Loading weather data…</string>
+    <string name="min_max">Min/Max</string>
+    <string name="pressure">Pressure</string>
 </resources>
