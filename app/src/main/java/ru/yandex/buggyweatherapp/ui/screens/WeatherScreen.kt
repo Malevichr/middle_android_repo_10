@@ -24,6 +24,7 @@ import ru.yandex.buggyweatherapp.model.WeatherData
 import ru.yandex.buggyweatherapp.ui.components.DetailedWeatherCard
 import ru.yandex.buggyweatherapp.ui.components.LocationSearch
 import ru.yandex.buggyweatherapp.ui.components.WeatherCard
+import ru.yandex.buggyweatherapp.utils.rememberLocationPermissionChecker
 import ru.yandex.buggyweatherapp.viewmodel.WeatherUiState
 import ru.yandex.buggyweatherapp.viewmodel.WeatherViewModel
 
@@ -35,6 +36,11 @@ fun WeatherScreen(viewModel: WeatherViewModel, modifier: Modifier = Modifier) {
 
     var searchText by rememberSaveable { mutableStateOf("") }
     var showDetailedCard by rememberSaveable { mutableStateOf(false) }
+
+    val checkLocationPermission = rememberLocationPermissionChecker {
+        viewModel.fetchCurrentLocationWeather()
+    }
+
     WeatherScreenUi(
         state = state.value,
         searchText = searchText,
@@ -43,7 +49,9 @@ fun WeatherScreen(viewModel: WeatherViewModel, modifier: Modifier = Modifier) {
             onSearchTextChange = { searchText = it },
             onSearch = { viewModel.searchWeatherByCity(searchText) },
             onRefreshClick = { viewModel.searchWeatherByCity(searchText) },
-            onLocationRequest = viewModel::fetchCurrentLocationWeather,
+            onLocationRequest = {
+                checkLocationPermission()
+            },
             onCardClick = { showDetailedCard = !showDetailedCard },
         ),
         modifier = modifier
