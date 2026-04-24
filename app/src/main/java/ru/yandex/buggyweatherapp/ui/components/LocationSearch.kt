@@ -13,16 +13,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import ru.yandex.buggyweatherapp.repository.LocationRepository
-import ru.yandex.buggyweatherapp.repository.WeatherRepository
+import ru.yandex.buggyweatherapp.R
 
 @Composable
 fun LocationSearch(
@@ -35,13 +30,13 @@ fun LocationSearch(
         OutlinedTextField(
             value = searchText,
             onValueChange = { onSearchChange(it) },
-            label = { Text("Search city") },
+            label = { Text(stringResource(R.string.search_city)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             leadingIcon = {
                 IconButton(onClick = { onLocationRequest() }) {
-                    Icon(Icons.Default.LocationOn, contentDescription = "Get current location")
+                    Icon(Icons.Default.LocationOn, contentDescription = stringResource(R.string.get_current_location))
                 }
             },
             trailingIcon = {
@@ -50,7 +45,7 @@ fun LocationSearch(
                         onCitySearch()
                     }
                 }) {
-                    Icon(Icons.Default.Search, contentDescription = "Search")
+                    Icon(Icons.Default.Search, contentDescription = stringResource(R.string.search))
                 }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -61,33 +56,4 @@ fun LocationSearch(
             })
         )
     }
-}
-
-@Composable
-fun LocationSearchWithDirectApiCall() {
-    val context = LocalContext.current
-    var searchText by remember { mutableStateOf("") }
-
-
-    val weatherRepository = WeatherRepository()
-    val locationRepository = LocationRepository(context)
-
-    OutlinedTextField(
-        value = searchText,
-        onValueChange = { searchText = it },
-        label = { Text("Search city") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        trailingIcon = {
-            IconButton(onClick = {
-                if (searchText.isNotBlank()) {
-
-                    weatherRepository.getWeatherByCity(searchText) { weatherData, error -> }
-                }
-            }) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
-            }
-        }
-    )
 }

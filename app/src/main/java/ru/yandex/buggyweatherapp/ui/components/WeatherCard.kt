@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -21,14 +19,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.yandex.buggyweatherapp.R
 import ru.yandex.buggyweatherapp.model.WeatherData
-import ru.yandex.buggyweatherapp.utils.WeatherIconMapper
+import ru.yandex.buggyweatherapp.utils.WeatherDataMapper
 
 @Composable
 fun WeatherCard(
     weather: WeatherData,
-    onFavoriteClick: () -> Unit,
     onRefreshClick: () -> Unit,
     onCardClick: () -> Unit
 ) {
@@ -53,33 +52,25 @@ fun WeatherCard(
                     style = MaterialTheme.typography.headlineMedium
                 )
 
-                Row {
-                    IconButton(onClick = onFavoriteClick) {
-                        Icon(
-                            imageVector = if (weather.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite"
-                        )
-                    }
 
                     IconButton(onClick = onRefreshClick) {
                         Icon(
                             imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh"
+                            contentDescription = stringResource(R.string.refresh_weather)
                         )
                     }
-                }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
 
             Text(
-                text = "Temperature: " + weather.temperature.toString() + "°C",
+                text = "Temperature: " + WeatherDataMapper.formatTemperature(weather.temperature) ,
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Text(
-                text = "Feels like: " + weather.feelsLike.toString() + "°C",
+                text = "Feels like: " + WeatherDataMapper.formatTemperature(weather.feelsLike),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -106,12 +97,12 @@ fun WeatherCard(
             ) {
 
                 Text(
-                    text = "Sunrise: " + WeatherIconMapper.formatTimestamp(weather.sunriseTime),
+                    text = "Sunrise: " + WeatherDataMapper.formatTimestamp(weather.sunriseTime),
                     style = MaterialTheme.typography.bodySmall
                 )
 
                 Text(
-                    text = "Sunset: " + WeatherIconMapper.formatTimestamp(weather.sunsetTime),
+                    text = "Sunset: " + WeatherDataMapper.formatTimestamp(weather.sunsetTime),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -122,7 +113,7 @@ fun WeatherCard(
                 onClick = onRefreshClick,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                Text("Refresh Weather")
+                Text(stringResource(R.string.refresh_weather))
             }
         }
     }

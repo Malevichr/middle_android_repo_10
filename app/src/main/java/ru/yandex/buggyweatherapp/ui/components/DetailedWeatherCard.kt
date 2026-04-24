@@ -1,6 +1,5 @@
 package ru.yandex.buggyweatherapp.ui.components
 
-import android.widget.ImageView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,39 +10,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
+import coil.compose.AsyncImage
+import ru.yandex.buggyweatherapp.R
 import ru.yandex.buggyweatherapp.model.WeatherData
-import ru.yandex.buggyweatherapp.utils.ImageLoader
-import ru.yandex.buggyweatherapp.utils.WeatherIconMapper
+import ru.yandex.buggyweatherapp.utils.WeatherDataMapper
 
 @Composable
 fun DetailedWeatherCard(
     weather: WeatherData,
-    onFavoriteClick: () -> Unit,
-    onRefreshClick: () -> Unit,
     onCardClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
-
-    val imageView = remember { ImageView(context) }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,41 +41,25 @@ fun DetailedWeatherCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = weather.cityName,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-
-                IconButton(onClick = onFavoriteClick) {
-                    Icon(
-                        imageVector = if (weather.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite"
-                    )
-                }
-            }
-
+            Text(
+                text = weather.cityName,
+                style = MaterialTheme.typography.headlineMedium
+            )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
-
-                AndroidView(
-                    factory = { imageView },
-                    modifier = Modifier.size(50.dp)
-                ) {
-
-                    val iconUrl = "https://openweathermap.org/img/wn/${weather.icon}@2x.png"
-                    ImageLoader.loadInto(iconUrl, it)
-                }
-
+                AsyncImage(
+                    model = WeatherDataMapper.weatherIconUrl(weather.icon),
+                    contentDescription = WeatherDataMapper.getWeatherDescription(
+                        weather.description,
+                        weather.temperature
+                    ),
+                    modifier = Modifier.size(50.dp),
+                )
 
                 Text(
-                    text = weather.temperature.toString() + "°C",
+                    text = WeatherDataMapper.formatTemperature(weather.temperature),
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -105,43 +74,46 @@ fun DetailedWeatherCard(
 
             LazyColumn {
                 item {
-                    WeatherDataRow("Feels like", weather.feelsLike.toString() + "°C")
+                    WeatherDataRow(
+                        stringResource(R.string.feels_like),
+                        WeatherDataMapper.formatTemperature(weather.feelsLike)
+                    )
                 }
                 item {
-                    WeatherDataRow("Min/Max", "${weather.minTemp}°C / ${weather.maxTemp}°C")
+                    WeatherDataRow(
+                        stringResource(R.string.min_max),
+                        "${WeatherDataMapper.formatTemperature(weather.minTemp)} / " +
+                                WeatherDataMapper.formatTemperature(weather.maxTemp)
+                    )
                 }
                 item {
-                    WeatherDataRow("Humidity", weather.humidity.toString() + "%")
+                    WeatherDataRow(
+                        stringResource(R.string.humidity),
+                        weather.humidity.toString() + "%"
+                    )
                 }
                 item {
-                    WeatherDataRow("Pressure", weather.pressure.toString() + " hPa")
+                    WeatherDataRow(
+                        stringResource(R.string.pressure),
+                        weather.pressure.toString() + " hPa"
+                    )
                 }
                 item {
-                    WeatherDataRow("Wind", weather.windSpeed.toString() + " m/s")
+                    WeatherDataRow(
+                        stringResource(R.string.wind),
+                        weather.windSpeed.toString() + " m/s"
+                    )
                 }
                 item {
                     WeatherDataRow(
                         "Sunrise",
-                        WeatherIconMapper.formatTimestamp(weather.sunriseTime)
+                        WeatherDataMapper.formatTimestamp(weather.sunriseTime)
                     )
                 }
                 item {
-                    WeatherDataRow("Sunset", WeatherIconMapper.formatTimestamp(weather.sunsetTime))
+                    WeatherDataRow("Sunset", WeatherDataMapper.formatTimestamp(weather.sunsetTime))
                 }
             }
-        }
-    }
-
-
-    DisposableEffect(weather.icon) {
-        val iconUrl = "https://openweathermap.org/img/wn/${weather.icon}@2x.png"
-
-
-        val bitmap = ImageLoader.loadImageSync(iconUrl)
-        imageView.setImageBitmap(bitmap)
-
-        onDispose {
-
         }
     }
 }
